@@ -22,25 +22,20 @@ class Knight
 
   def get_starting_location(row, column, board = @board)
     @start = [row, column]
-    print @start
-    puts "\n"
+    print "\nStart: #{@start}\n"
   end
 
-  # -2 , + 1 are nums
   def list_possible_moves
     @possible_moves = []
     @possible_moves << [@start[0] + 2, @start[1] + 1] << [@start[0] + 2, @start[1] - 1] <<
     [@start[0] - 2, @start[1] + 1] << [@start[0] - 2, @start[1] - 1] << [@start[0] + 1, @start[1] + 2] <<
     [@start[0] - 1, @start[1] + 2] << [@start[0] - 1, @start[1] - 2] << [@start[0] + 1, @start[1] - 2]
-    print @possible_moves
-    puts "\n\n"
-    n = 0
     for i in 0...@possible_moves.length
-      @possible_moves[i] = "nil" if @board[@possible_moves[i][n]][@possible_moves[i][n + 1]] == nil
-      @possible_moves[i] = "nil" if @possible_moves[i][0] < 0 || @possible_moves[i][1] < 0
+      @possible_moves[i] = "nil" if @possible_moves[i][0] < 0 || @possible_moves[i][1] < 0 ||
+      @possible_moves[i][0] > 7 || @possible_moves[i][1] > 7
     end
     @possible_moves.delete("nil")
-    print @possible_moves
+    print "Possible moves: #{@possible_moves}"
     puts "\n"
   end
 end
