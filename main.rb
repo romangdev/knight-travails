@@ -18,6 +18,7 @@ end
 class Knight
   def initialize(board)
     @board = board
+    @flag = false
   end
 
   def get_starting_location(row, column)
@@ -27,12 +28,12 @@ class Knight
     @start
   end
 
-  def list_possible_moves
+  def list_possible_moves(node)
     @possible_moves = []
 
-    @possible_moves << [@start[0] + 2, @start[1] + 1] << [@start[0] + 2, @start[1] - 1] <<
-    [@start[0] - 2, @start[1] + 1] << [@start[0] - 2, @start[1] - 1] << [@start[0] + 1, @start[1] + 2] <<
-    [@start[0] - 1, @start[1] + 2] << [@start[0] - 1, @start[1] - 2] << [@start[0] + 1, @start[1] - 2]
+    @possible_moves << [node[0] + 2, node[1] + 1] << [node[0] + 2, node[1] - 1] <<
+    [node[0] - 2, node[1] + 1] << [node[0] - 2, node[1] - 1] << [node[0] + 1, node[1] + 2] <<
+    [node[0] - 1, node[1] + 2] << [node[0] - 1, node[1] - 2] << [node[0] + 1, node[1] - 2]
 
     for i in 0...@possible_moves.length
       @possible_moves[i] = "nil" if @possible_moves[i][0] < 0 || @possible_moves[i][1] < 0 ||
@@ -47,34 +48,136 @@ class Knight
     @possible_moves
   end
 
-  def knight_moves(start, ending)
+  def knight_moves(start, ending, level = 0)
+
     @start = [start[0], start[1]]
-    node = Node.new(@start)
-    self.list_possible_moves
-    node.children = @possible_moves
+    @start = Node.new(@start)
+    queue = [@start]
 
-    print node.data
-    puts "\n"
-    print node.children
+    until queue.empty?
+      node = queue.shift
+      previous_parent = node
 
-    node.children.each do |location|
-      if location == ending
-        flag = true
-        puts "\nCHILDREN CONTAIN ENDING LOCATION"
-        return flag
-      else
-        next
+      self.list_possible_moves(node.data)
+  
+      node.children = @possible_moves
+
+      for i in 0...node.children.length
+        if node.children[i] == node.data
+          node.children[i] = "nil"
+        end
+        unless node.previously_visited.length == 0
+          for n in 0...node.previously_visited.length
+            if node.children[i] == node.previously_visited[n]
+              node.children[i] = "nil"
+            end
+          end
+        end
+      end
+
+      node.children.delete("nil")
+
+      print "\n\nParent: #{node.data}"
+      print "\nChildren #{node.children}\n"
+
+      node.children.each do |location|
+        if location == ending
+          @flag = true
+          puts "\nCHILDREN CONTAIN ENDING LOCATION"
+          return @flag
+        else
+          next
+        end
+      end
+
+      if queue.empty?
+        node.children.each do |location|
+          location_node = Node.new(location)
+          unless previous_parent.previously_visited.length == 0
+            for i in 0...previous_parent.previously_visited.length
+              location_node.previously_visited << previous_parent.previously_visited[i]
+            end
+          end
+          location_node.previously_visited << node.data
+          queue << location_node
+        end
+        level += 1
+        print "\nLEVEL #{level} QUEUE: \n#{queue}"
       end
     end
+
+    if @flag
+      print "FLAGGG"
+      return
+    end
+
+    # puts level
+    # node.children.each do |location|
+    #   knight_moves(location, ending, level, previous_parent)
+    # end
   end
+
+
+
+    # return if @flag
+
+  #   @start = [start[0], start[1]]
+  #   node = Node.new(@start)
+  #   self.list_possible_moves
+
+  #   node.children = @possible_moves
+
+  #   for i in 0...node.children.length
+  #     if node.children[i] == node.data || node.children[i] == previous_parent
+  #       node.children[i] = "nil"
+  #     end
+  #   end
+
+  #   node.children.delete("nil")
+
+  #   print "\n\nParent: #{node.data}"
+  #   print "\nChildren #{node.children}\n"
+  #   print "Previous parent: #{previous_parent}\n"
+
+  #   previous_parent = node.data
+
+  #   # USE A QUEUE TO KEEP ALL ON SAME LEVEL OF CHILDREN FIRST!!!!!!
+
+  #   node.children.each do |location|
+  #     if location == ending
+  #       @flag = true
+  #       puts "\nCHILDREN CONTAIN ENDING LOCATION"
+  #       return @flag
+  #     else
+  #       next
+  #     end
+  #   end
+
+  #   level += 1
+
+  #   if @flag
+  #     print "FLAGGG"
+  #     return
+  #   end
+
+
+
+  #   puts level
+  #   node.children.each do |location|
+  #     knight_moves(location, ending, level, previous_parent)
+  #   end
+  # end
 end
 
 class Node
-  attr_accessor :data, :children
+  attr_accessor :data, :children, :previously_visited
 
-  def initialize(data)
+  # Previously visited nodes should compound somehow...figure it out!!!
+
+  def initialize(data, previously_visited = [])
     @data = data
     @children = nil
+    @previously_visited = previously_visited
   end
 end
 
@@ -82,6 +185,6 @@ board = Board.new
 board.generate_board
 
 knight = Knight.new(board.board_arr)
-knight.get_starting_location(1, 2)
-knight.list_possible_moves
-knight.knight_moves([1,2], [0,0])
+knight.knight_moves([1,2], [7,4])
+
+#7, 4 is real test
