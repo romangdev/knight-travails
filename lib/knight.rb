@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'board'
 require_relative 'node'
 
@@ -34,7 +36,7 @@ class Knight
     @possible_moves
   end
 
-  def knight_moves(start, ending, level = 0)
+  def knight_moves(start, ending)
     # Return from method immediately if one or both of the arguments a user passes to the knight_moves
     # method is not a location on the board.
     if start[0].negative? || start[0] > 7 || start[1].negative? || start[1] > 7 ||
@@ -58,8 +60,7 @@ class Knight
     # Check to see if any possible moves of the start square include the end square
     @start.children.each do |element|
       if element == ending
-        return print "\nShortest path (you can jump straight to the end square!):\n#{[start,
-                                                                                      ending]}\n"
+        return print "\nShortest path takes 1 move (you can jump straight to the end square!):\n#{[start, ending]}\n"
       end
 
       hold_original_children << element
@@ -111,18 +112,17 @@ class Knight
                              all_paths[i + 1]
                            end
               end
-              return print "\nShortest path: #{shortest}\n"
+              return print "\nShortest path takes #{shortest.length - 1} moves: #{shortest}\n"
             end
             return shortest
           end
 
-          # Reset the queue and level, and select new starting node (based on the original children of the start
+          # Reset the queue, and select new starting node (based on the original children of the start
           #  location) when one path has been added to all_paths
           queue = []
           node = hold_original_children.shift
           node = Node.new(node)
           queue = [node]
-          level = 0
         else
           next
         end
@@ -141,7 +141,6 @@ class Knight
         location_node.previously_visited << node.data
         queue << location_node
       end
-      level += 1
     end
   end
 end

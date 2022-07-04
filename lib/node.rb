@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Node class is used to generate each visited chess square as a node with attributes to be saved
 # so that we can traverse a tree of nodes, allowing us to find the shortest path a knight can take
 # from start to finish
