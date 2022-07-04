@@ -50,6 +50,7 @@ class Knight
 
     @start = [start[0], start[1]]
     @start = Node.new(@start)
+
     queue = [@start]
 
     hold_original_children = []
@@ -57,6 +58,7 @@ class Knight
     @start.children = @possible_moves
 
     @start.children.each do |element|
+      return print "\nOne edge from start to end:\n#{[start, ending]}\n" if element == ending
       hold_original_children << element
     end
 
@@ -113,9 +115,10 @@ class Knight
           queue = [node]
           level = 0
 
+          ### PSEUDO>>>
           # set start node to next in list of the original start children
           # reset queue level and previously visited instance
-          # will prob want to save each previosuly visitied instance in an arry
+          # will prob want to save each previosuly visited instance in an arry
           # and return the shortest one
 
           # return
@@ -161,7 +164,9 @@ board = Board.new
 board.generate_board
 
 knight = Knight.new(board.board_arr)
-knight.knight_moves([1,2], [1,2])
+knight.knight_moves([1,2], [1,1])
 #5, 2 & 7, 5
 
+#TODO>>>>
 #HANDLE ERRORS/EXCEPTIONS (INCLUDING INPUTTING STARTS AND ENDS OFF BOARD)
+#REMOVE LAST ARRAY IN ARRAY OF PATHS WHEN FINISHED ITERATING THROUGH ORIGINAL CHILDREN
