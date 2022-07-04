@@ -1,10 +1,10 @@
 # This class is used to generate a visual chess board for the user's reference
 class Board
   attr_accessor :board_arr, :possible_moves
-  
-  def initialize 
+
+  def initialize
     @board_arr = []
-    8.times {@board_arr << [0, 1, 2, 3, 4, 5, 6, 7]}
+    8.times { @board_arr << [0, 1, 2, 3, 4, 5, 6, 7] }
   end
 
   # Generates an 8 x 8 chess board numbered with indices from 0 - 7
