@@ -46,9 +46,23 @@ class Knight
 
   def knight_moves(start, ending, level = 0)
 
+    return print "\nStart is same as end:\n#{[start, ending]}\n" if start == ending
+
     @start = [start[0], start[1]]
     @start = Node.new(@start)
     queue = [@start]
+
+    hold_original_children = []
+    self.list_possible_moves(@start.data)
+    @start.children = @possible_moves
+
+    @start.children.each do |element|
+      hold_original_children << element
+    end
+
+    all_paths = []
+
+    print "\nORIGINAL CHILDREN: #{hold_original_children}\n"
 
     until queue.empty?
       node = queue.shift
@@ -80,7 +94,31 @@ class Knight
         if location == ending
           @flag = true
           puts "\nCHILDREN CONTAIN ENDING LOCATION"
-          return @flag
+
+          node.previously_visited << node.data
+          node.previously_visited << ending
+          unless node.previously_visited[0] == start
+            node.previously_visited.unshift(start)
+          end
+          all_paths << node.previously_visited
+
+          puts "ALL PATHS\n"
+          all_paths.each do |path|
+            print "#{path}\n"
+          end
+
+          queue = []
+          node = hold_original_children.shift
+          node = Node.new(node)
+          queue = [node]
+          level = 0
+
+          # set start node to next in list of the original start children
+          # reset queue level and previously visited instance
+          # will prob want to save each previosuly visitied instance in an arry
+          # and return the shortest one
+
+          # return
         else
           next
         end
@@ -106,11 +144,6 @@ class Knight
       print "FLAGGG"
       return
     end
-
-    # puts level
-    # node.children.each do |location|
-    #   knight_moves(location, ending, level, previous_parent)
-    # end
   end
 end
 
@@ -128,4 +161,7 @@ board = Board.new
 board.generate_board
 
 knight = Knight.new(board.board_arr)
-knight.knight_moves([1,2], [7,4])
+knight.knight_moves([1,2], [1,2])
+#5, 2 & 7, 5
+
+#HANDLE ERRORS/EXCEPTIONS (INCLUDING INPUTTING STARTS AND ENDS OFF BOARD)
