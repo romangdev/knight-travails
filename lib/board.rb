@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This class is used to generate a visual chess board for the user's reference
 class Board
   attr_accessor :board_arr, :possible_moves
