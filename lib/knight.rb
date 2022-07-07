@@ -54,8 +54,9 @@ class Knight
     return if check_one_edge_path(@start, ending, hold_original_children) == 1
 
     all_paths = []
+    flag = 0
 
-    until queue.empty?
+    until queue.empty? || flag == 1
       node = queue.shift
       previous_parent = node
       list_possible_moves(node.data)
@@ -63,28 +64,15 @@ class Knight
       remove_visited_squares(node)
       node.children.delete('nil')
 
-      # When you find the ending square in the children (possible moves) of a node down one tree path
-      # then add the entire sequence path (from start to finish) to an array of arrays called all_paths
       node.children.each do |location|
         if location == ending
           fill_all_paths(node, location, ending, all_paths, start)
-
-          # Execute once all shortest child paths have been found
-          return if remove_uneeded_final_path(hold_original_children, all_paths) == 1
-
-          # Reset the queue, and select new starting node (based on the original children of the start
-          #  location) when one path has been added to all_paths
-          queue = []
-          node = hold_original_children.shift
-          node = Node.new(node)
-          queue = [node]
-
+          flag = 1
+          print "\n\nALL PATHS: #{all_paths}\n"
         else
           next
         end
       end
-
-      next unless queue.empty?
 
       fill_queue_with_children(node, previous_parent, queue)
     end
@@ -103,20 +91,6 @@ class Knight
         node.children[i] = 'nil' if node.children[i] == node.previously_visited[n]
       end
     end
-  end
-
-  # Return the shortest path from the all_paths array
-  def get_shortest_path(all_paths)
-    shortest = all_paths[0]
-    for i in 0...all_paths.length
-      if all_paths[i].length < shortest.length
-        shortest = all_paths[i]
-      else
-        next
-      end
-    end
-    print "\nShortest path takes #{shortest.length - 1} moves: #{shortest}\n"
-    return shortest
   end
 
   # Fill the queue with the next set of children from a node
@@ -151,16 +125,6 @@ class Knight
     node.previously_visited << ending
     node.previously_visited.unshift(start) unless node.previously_visited[0] == start
     all_paths << node.previously_visited
-  end
-
-  # remove the last element of all_paths array to handle a duplication issue.
-  def remove_uneeded_final_path(hold_original_children, all_paths)
-    if hold_original_children.empty?
-      puts "\n"
-      all_paths.delete_at(-1)
-      get_shortest_path(all_paths)
-      return 1
-    end
   end
 
   # Return from method immediately if one or both of the arguments a user passes to the knight_moves

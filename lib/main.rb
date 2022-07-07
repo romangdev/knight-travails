@@ -9,5 +9,5 @@ puts "\n- BOARD DISPLAY FOR REFERENCE -"
 board.generate_board
 
 knight = Knight.new(board.board_arr)
-knight.knight_moves([1, 1], [4, 4])
+knight.knight_moves([0, 0], [7, 7])
 puts "\n"
