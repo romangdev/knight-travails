@@ -67,6 +67,7 @@ class Knight
           flag = 1
           move_count = shortest_path.length - 1
           print "\nShortest path will take you #{move_count} moves:\n#{shortest_path}\n"
+          shortest_path
         else
           next
         end
