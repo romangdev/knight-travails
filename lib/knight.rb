@@ -53,22 +53,20 @@ class Knight
 
     return if check_one_edge_path(@start, ending, hold_original_children) == 1
 
-    all_paths = []
+    shortest_path = []
     flag = 0
 
     until queue.empty? || flag == 1
       node = queue.shift
       previous_parent = node
-      list_possible_moves(node.data)
-      node.children = @possible_moves
-      remove_visited_squares(node)
-      node.children.delete('nil')
+      clean_node_children(node, @possible_moves)
 
       node.children.each do |location|
         if location == ending
-          fill_all_paths(node, location, ending, all_paths, start)
+          shortest_path = assign_shortest_path(node, location, ending, start)
           flag = 1
-          print "\n\nALL PATHS: #{all_paths}\n"
+          move_count = shortest_path.length - 1
+          print "\nShortest path will take you #{move_count} moves:\n#{shortest_path}\n"
         else
           next
         end
@@ -79,6 +77,15 @@ class Knight
   end
 
   private
+
+  # Get the nodes children (all possible moves) and clean them to ensure none have been
+  # visited before in that path
+  def clean_node_children(node, possible_moves)
+    list_possible_moves(node.data)
+    node.children = @possible_moves
+    remove_visited_squares(node)
+    node.children.delete('nil')
+  end
 
   # For all possible moves a square can make, do not include in that array its parent square
   # or any square it has already visited before on its path
@@ -120,11 +127,11 @@ class Knight
   end
 
   # fill all paths array with latest, shortest child path
-  def fill_all_paths(node, location, ending, all_paths, start)
+  def assign_shortest_path(node, location, ending, start)
     node.previously_visited << node.data
     node.previously_visited << ending
     node.previously_visited.unshift(start) unless node.previously_visited[0] == start
-    all_paths << node.previously_visited
+    node.previously_visited
   end
 
   # Return from method immediately if one or both of the arguments a user passes to the knight_moves
